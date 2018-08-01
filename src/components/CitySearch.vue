@@ -10,11 +10,8 @@
             <p><router-link v-bind:to="{ name: 'CurrentWeather', params: { cityId: city.id } }">View Current Weather</router-link></p>
 
             <!-- TODO: Make weather summary be in a child component. -->
-            <div v-for="weatherSummary in city.weather" class="weatherSummary">
-                <img v-bind:src="'http://openweathermap.org/img/w/' + weatherSummary.icon + '.png'" v-bind:alt="weatherSummary.main">
-                <br>
-                <b>{{ weatherSummary.main }}</b>
-            </div>
+            <weather-summary v-bind:weatherData="city.weather"></weather-summary>
+            
             <!-- TODO: Make dl of weather data be in a child component. -->
             <dl>
                 <dt>Current Temp</dt>
@@ -38,7 +35,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import {API} from '@/common/api';
+import WeatherSummary from '@/components/WeatherSummary';
 
 export default {
   name: 'CitySearch',
@@ -51,12 +49,9 @@ export default {
   },
   methods: {
     getCities: function () {
-      // TODO: Improve base config for API
-      axios.get('//api.openweathermap.org/data/2.5/find', {
+      API.get('find', {
         params: {
             q: this.query,
-            units: 'imperial',
-            APPID: 'YOUR_APPID_HERE'
         }
       })
       .then(response => {
@@ -66,6 +61,9 @@ export default {
         this.errors.push(error)
       });
     }
+  },
+  components: {
+    'weather-summary': WeatherSummary
   }
 }
 </script>
